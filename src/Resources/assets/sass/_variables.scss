@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap');
+//velocity variables
+$white-color: #FFFFFF;
+$black-color: #000;
+$font-color: rgba(0,0,0,0.83);
+$font-color-light: rgba(255, 255, 255, 0.83);
+$button-primary-bg: #21A179;
+$border-primary: #269c77;
+$button-danger: #F05153;
+$border-danger: #F05153;
+$color-danger: #F05153;
+$border-common: #DEDDDD;
+$border-dark: #DCDCDC;
+$border-light: #E5E5E5;
+$border-general: #E5E5E5;
+$theme-color: #26A37C;
+$theme-dark-color: #247959;
+$btn-text-color: #FFFFFF;
+$light-color: #FFFFFF;
+$dark-color: #000000;
+$light1-black: #141516;
+$light2-black: #cfcfd0;
+$link-color: #4D7EA8;
+$light-link-color: #28557B;
+$grey-clr: rgba(0,0,0,0.53);
+$light-grey-clr: rgb(158, 158, 158);
+$light-background: #F7F7F9;
+$color-primary: #0041ff;
+$sidebar-width: 230px;
+$box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+$material-icons-font-path: "../material-icons/iconfont/" !default;
+$border-normal: 1px solid $border-dark;
+$color-primary-booters: #ff6200;
+$danger-color: #FC6868;
+
+$font-family-pro: 'Source Sans Pro', sans-serif;
+
+// ----------------------------------------------------------------------
+// Grid Breakpoint
+// ----------------------------------------------------------------------
+
+$grid-breakpoints-xs: 376;
+$grid-breakpoints-xsm: 480;
+$grid-breakpoints-sm: 601;
+$grid-breakpoints-md: 769;
+$grid-breakpoints-lg: 993;
+$grid-breakpoints-mlg: 1201;
+$grid-breakpoints-xls: 1367;
+$grid-breakpoints-xl: 1281;
+
+// ----------------------------------------------------------------------
+// End Grid Breakpoint
+// ----------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------
+// End Fonts
+// ----------------------------------------------------------------------
+$font-proxima-nova-regular: 'Proxima-Nova-Regular', sans-serif;
+$font-proxima-nova-bold: 'Proxima-Nova-Bold', sans-serif;;
+$font-proxima-nova-semiBold: 'Proxima-Nova-SemiBold', sans-serif;;
+$font-proxima-nova-light: 'Proxima-Nova-Light', sans-serif;;
+
+// ----------------------------------------------------------------------
+// End Fonts
+// ----------------------------------------------------------------------

@@ -1,9 +1,12 @@
+
+@section('content-wrapper')
+    <payment-stripe></payment-stripe>
+@endsection
+
 @php
     $customer = auth()->guard('customer')->user();
     $stripePayment = new GGPHP\Payment\Payment\StripePayment;
 @endphp
-
-<payment-stripe></payment-stripe>
 
 @push('scripts')
     <script src="https://js.stripe.com/v3/"></script>
@@ -65,7 +68,7 @@
                         <span class="message"> @{{ errorApi }} </span>
                     </div>
 
-                    <div class="mt-10 text-right">
+                    <div class="mt-10 text-center">
                         <button type="submit" class="btn-stripe" data-tid="elements.form.pay_button" @click.prevent="submitForm()">Submit</button>
                     </div>
                 </form>
@@ -202,6 +205,7 @@
                         }
                         if (isValid) {
                             this.$emit('checkPayment', { check: false, id: newData.id });
+                            this.$http.post("{{ route('shop.checkout.save-payment') }}", { 'payment': {method: 'stripe'} });
                         }
                     } finally {
                         this.stripeInformation = newData;
