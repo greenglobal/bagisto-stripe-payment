@@ -3,7 +3,7 @@
 return [
     [
         'key' => 'sales.paymentmethods.stripe',
-        'name' => 'payment::app.system.stripe.name',
+        'name' => 'ggphp::payment.system.stripe.name',
         'sort' => 1,
         'fields' => [
             [
@@ -31,35 +31,35 @@ return [
             ],
             [
                 'name' => 'pk_test_key',
-                'title' => 'payment::app.system.stripe.pk-test-key',
+                'title' => 'ggphp::payment.system.stripe.pk-test-key',
                 'type' => 'text',
                 'channel_based' => false,
                 'locale_based' => true
             ],
             [
                 'name' => 'sk_test_key',
-                'title' => 'payment::app.system.stripe.sk-test-key',
+                'title' => 'ggphp::payment.system.stripe.sk-test-key',
                 'type' => 'text',
                 'channel_based' => false,
                 'locale_based' => true
             ],
             [
                 'name' => 'pk_key',
-                'title' => 'payment::app.system.stripe.pk-key',
+                'title' => 'ggphp::payment.system.stripe.pk-key',
                 'type' => 'text',
                 'channel_based' => false,
                 'locale_based' => true
             ],
             [
                 'name' => 'sk_key',
-                'title' => 'payment::app.system.stripe.sk-key',
+                'title' => 'ggphp::payment.system.stripe.sk-key',
                 'type' => 'text',
                 'channel_based' => false,
                 'locale_based' => true
             ],
             [
                 'name' => 'test_mode',
-                'title' => 'payment::app.system.stripe.test-mode',
+                'title' => 'ggphp::payment.system.stripe.test-mode',
                 'type' => 'boolean',
                 'channel_based' => false,
                 'locale_based' => true,

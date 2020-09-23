@@ -11,23 +11,9 @@ mix.setPublicPath(publicPath).mergeManifest();
 mix.disableNotifications();
 
 mix
-    .js(
-        __dirname + "/src/Resources/assets/js/app.js",
-        "js/kewi.js"
-    )
-
-    .copyDirectory(__dirname + "/src/Resources/assets/icomoon", publicPath + "/icomoon")
-    .copyDirectory(__dirname + "/src/Resources/assets/fonts", publicPath + "/fonts")
-
     .sass(
-        __dirname + '/src/Resources/assets/sass/admin.scss',
-        __dirname + '/' + publicPath + '/css/kewi-admin.css'
-    )
-    .sass(
-        __dirname + '/src/Resources/assets/sass/app.scss',
-        __dirname + '/' + publicPath + '/css/kewi.css', {
-            includePaths: ['node_modules/bootstrap-sass/assets/stylesheets/'],
-        }
+        __dirname + '/src/Resources/assets/sass/payment.scss',
+        __dirname + '/' + publicPath + '/css/payment.css'
     )
 
     .options({

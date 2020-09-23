@@ -17,14 +17,19 @@ class PaymentServiceProvider extends ServiceProvider
     public function boot()
     {
         include __DIR__ . '/../Http/routes.php';
+        $this->app->register(EventServiceProvider::class);
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'payment');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'payment');
+        $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'ggphp');
+        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'ggphp-payment');
 
         $this->publishes([
-            __DIR__ . '/../Resources/views/payment' => resource_path('themes/velocity/views'),
+            __DIR__ . '/../Resources/views' => resource_path('themes/velocity/views'),
         ]);
+
+        $this->publishes([
+            __DIR__ . '/../../publishable/assets/' => public_path('themes/velocity/assets'),
+        ], 'public');
     }
 
     /**
@@ -38,6 +43,7 @@ class PaymentServiceProvider extends ServiceProvider
 
         $this->registerConfig();
     }
+
     /**
      * Register Bouncer as a singleton.
      *
@@ -52,6 +58,7 @@ class PaymentServiceProvider extends ServiceProvider
             return new Payment();
         });
     }
+
     /**
      * Register package config.
      *
