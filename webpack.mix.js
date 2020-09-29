@@ -15,6 +15,10 @@ mix
         __dirname + '/src/Resources/assets/sass/payment.scss',
         __dirname + '/' + publicPath + '/css/payment.css'
     )
+    .copy(
+        __dirname + '/src/Resources/assets/images/loading.gif',
+        __dirname + '/' + publicPath + '/images/loading.gif'
+    )
 
     .options({
         processCssUrls: false

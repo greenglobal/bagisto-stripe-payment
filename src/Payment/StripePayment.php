@@ -17,79 +17,82 @@ class StripePayment extends Payment
      */
     protected $code = 'stripe';
 
-    public const TYPE_CUSTOMER = 'customer';
-    public const TYPE_ADMIN = 'admin';
+    private $guard;
 
-    protected $guard;
+    private $auth;
 
-    protected $auth;
 
     public function __construct()
     {
-        auth()->setDefaultDriver('customer');
-
-        $this->auth = auth()->guard('customer')->user();
-
         \Stripe\Stripe::setApiKey($this->getApiKey());
     }
 
-    public function charge($card, $data)
+    public function getGuard()
     {
-        $customer = $this->createOrRetrieveCustomer();
-
-        try {
-            $charge = \Stripe\Charge::create([
-                'amount' => (int) core()->convertPrice($data['base_grand_total']) * 100,
-                'currency' => $data['order_currency_code'],
-                'source' => $card,
-                'customer' => $customer->id,
-                'receipt_email' => $data['customer_email'],
-                'shipping' => [
-                    'address' => [
-                        'line1' => $data['shipping_address']['address1'],
-                        'state' => $data['shipping_address']['state'],
-                        'postal_code' => $data['shipping_address']['postcode'],
-                    ],
-                    'carrier' => $data['shipping_description'],
-                    'name' => $data['shipping_address']['first_name'] . ' ' . $data['shipping_address']['last_name'],
-                ],
-                'description' => json_encode([
-                    'cart_id' => $data['cart_id'],
-                    'customer_id' => $data['customer_id'],
-                    'total_item_count' => $data['total_item_count'],
-                    'total_qty_ordered' => $data['total_qty_ordered'],
-                    'base_grand_total' => $data['base_grand_total'],
-                ]),
-            ]);
-        } catch (\Exception $e) {
-            return ['error' => $e->getMessage()];
-        }
-
-        return $charge;
+        return $this->guard;
     }
 
-    public function createOrRetrieveCustomer($newStatus = 1)
+    public function setGuard($value)
     {
-        $user = $this->auth;
+        $this->guard = $value;
+    }
 
-        $userStripe= UserStripe::where('user_id', $user->id)->first();
-        $stripeCustomerId = $userStripe->stripe_customer_id ?? null;
+    public function getAuth()
+    {
+        return $this->auth;
+    }
+
+    private function setAuth($value = null)
+    {
+        if (!$value) {
+            $guard = $this->getGuard();
+
+            if ($guard) {
+                $value = auth()->guard($guard)->user();
+            }
+        }
+
+        $this->auth = $value;
+    }
+
+    public function getUser()
+    {
+        $this->setAuth();
+
+        return $this->getAuth();
+    }
+
+    public function createOrRetrieveCustomer($newStatus = 1, $data = [])
+    {
+        $user = $this->getUser();
+        $stripeCustomerId = null;
+        if ($user) {
+            $userStripe= UserStripe::where('user_id', $user->id)->where('type', '=', $this->getGuard())->first();
+            $stripeCustomerId = $userStripe->stripe_customer_id ?? null;
+        }
 
         if (empty($stripeCustomerId)) {
+            $firstName = $data['first_name'] ?? ($user->first_name ?? null);
+            $lastName = $data['last_name'] ?? ($user->last_name ?? null);
+            $email = $data['email'] ?? ($user->email ?? null);
+            $phone = $data['phone'] ?? ($user->phone ?? null);
             $customer = \Stripe\Customer::create([
-                'description' => $user->first_name . ' ' . $user->last_name,
-                'email' => $user->email,
+                'description' => $firstName . ' ' . $lastName,
+                'email' => $email,
                 'metadata' => [
-                    'phone' => $user->phone,
+                    'phone' => $phone
                 ],
             ]);
-            $stripeCustomerId = $customer->id;
 
-            $userStripe = UserStripe::create([
-                'stripe_customer_id' => $stripeCustomerId,
-                'type' => self::TYPE_CUSTOMER,
-                'status' => $newStatus
-            ]);
+            if ($user) {
+                $stripeCustomerId = $customer->id;
+                $userStripe = UserStripe::create([
+                    'user_id' => $user->id,
+                    'stripe_customer_id' => $stripeCustomerId,
+                    'type' => $this->getGuard(),
+                    'status' => $newStatus
+                ]);
+            }
         } else {
             // Get customer stripe ID and check if had been deleted then update user stripe_customer_id is null
             $customer = \Stripe\Customer::retrieve($stripeCustomerId);
@@ -147,42 +150,5 @@ class StripePayment extends Payment
     public function getRedirectUrl()
     {
 
-    }
-
-    public function createOrRetrieveAccount($token = null, $newStatus = 1)
-    {
-        $user = auth()->guard('admin')->user();
-        $stripeAccountId = $user->stripe->stripe_account_id ?? null;
-
-        if (empty($stripeAccountId)) {
-            $params = [
-                'type' => 'custom',
-                'email' => $user->email,
-                'requested_capabilities' => [
-                    'card_payments',
-                    'transfers',
-                ],
-            ];
-            if ($token) {
-                $params['account_token'] = $token;
-            }
-            $account = \Stripe\Account::create($params);
-            $stripeAccountId = $account->id;
-
-            $user->stripe()->create([
-                'stripe_account_id' => $stripeAccountId,
-                'type' => self::TYPE_ADMIN,
-                'status' => $newStatus
-            ]);
-        } else {
-            // Get account stripe ID and check if had been deleted then update user stripe_account_id is null
-            $account = \Stripe\Account::retrieve($stripeAccountId);
-            if (isset($account->deleted) && $account->deleted) {
-                $user->stripe->stripe_account_id = null;
-                $user->stripe->save();
-            }
-        }
-
-        return $account;
     }
 }
