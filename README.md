@@ -13,8 +13,9 @@ This extension used for implement form create card, provider helper function for
 2. Open `config/app.php` and add **GGPHP\Payment\Providers\PaymentServiceProvider::class**.
 3. Open `composer.json` of root project and add **""GGPHP\\Payment\\": "packages/GGPHP/Payment/src""**.
 4. Go to `packages/GGPHP/Payment`, run the following command
-```javascipt
+```bash
 cd packages/GGPHP/Payment
+yarn
 yarn run prod
 ```
 5. Run the following command
@@ -34,7 +35,9 @@ php artisan route:cache
 ## Usage
 - Implement form Strcreate card in view
 ```php
-// $guard accept value is customer or admin
-@php $guard = 'customer'; @endphp
-@include('ggphp-payment::payment.payment-stripe', ['guard' => $guard])
+@section('content-wrapper')
+  // $guard accept value is customer or admin
+  @php $guard = 'customer'; @endphp
+  @include('ggphp-payment::payment.payment-stripe', ['guard' => $guard])
+@endsection
 ```

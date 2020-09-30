@@ -17,7 +17,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::listen('bagisto.shop.layout.head', function($viewRenderEventManager) {
+        Event::listen(['bagisto.shop.layout.head', 'bagisto.admin.layout.head'], function($viewRenderEventManager) {
             $viewRenderEventManager->addTemplate('ggphp-payment::payment.style');
         });
     }
