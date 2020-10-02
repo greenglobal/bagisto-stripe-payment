@@ -1,5 +1,9 @@
 @php
-    $customer = auth()->guard('customer')->user();
+    $user = null;
+    $guard = $guard ?? null;
+    if (!empty($guard)) {
+        $user = auth()->guard($guard)->user();
+    }
     $stripePayment = new GGPHP\Payment\Payment\StripePayment;
 @endphp
 
@@ -11,10 +15,9 @@
         <div class="payment-checkout payment" id="payment">
             <div class="header-shipping-method">
                 <h1 class="title-page">Payment Information</h1>
-                <p v-if="stripeInformation.last4 && !loading" @click="handleChange" class="text-change">Change</p>
             </div>
             <div v-if="loading" class="content-loading">
-                <img src="{{ asset('themes/kewi/assets/images/loading.gif') }}">
+                <img src="{{ asset('themes/velocity/assets/images/loading.gif') }}">
             </div>
             <div class="payment-methods-block" v-if="stripeInformation.last4 && !loading">
                 <div>
@@ -49,12 +52,72 @@
                             <div class="baseline"></div>
                         </div>
                     </div>
+                    <div class="row mb-25">
+                        <div class="col-md-12">
+                            <label class="label-default">
+                                First name
+                            </label>
+                            <input
+                                v-model="data.first_name"
+                                id="first-name"
+                                data-tid="elements.form.name_placeholder"
+                                class="input input-default empty"
+                                type="text"
+                                autocomplete="name"
+                            >
+                            <div class="baseline"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-25">
+                        <div class="col-md-12">
+                            <label class="label-default">
+                                Last name
+                            </label>
+                            <input
+                                v-model="data.last_name"
+                                id="last-name"
+                                data-tid="elements.form.name_placeholder"
+                                class="input input-default empty"
+                                type="text"
+                                autocomplete="name"
+                            >
+                            <div class="baseline"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-25">
+                        <div class="col-md-12">
+                            <label class="label-default">
+                                Email
+                            </label>
+                            <input
+                                v-model="data.email"
+                                id="email"
+                                data-tid="elements.form.name_placeholder"
+                                class="input input-default empty"
+                                type="text"
+                                autocomplete="name"
+                                v-validate="'email'"
+                                name="email"
+                            />
+                            <span class="control-error" v-if="errors.has('email')">@{{ errors.first('email') }}</span>
+                            <div class="baseline"></div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <label class="label-default">
-                                Name on Card
+                                Phone
                             </label>
-                            <input id="payment-name" data-tid="elements.form.name_placeholder" class="input input-default empty" type="text" required="" autocomplete="name">
+                            <input
+                                v-model="data.phone"
+                                id="phone"
+                                name="phone"
+                                class="input input-default empty"
+                                type="text"
+                                autocomplete="name"
+                                v-validate="'numeric|length:10,15'"
+                            />
+                            <span class="control-error" v-if="errors.has('phone')">@{{ errors.first('phone') }}</span>
                             <div class="baseline"></div>
                         </div>
                     </div>
@@ -65,7 +128,7 @@
                         <span class="message"> @{{ errorApi }} </span>
                     </div>
 
-                    <div class="mt-10 text-right">
+                    <div class="mt-10 text-center">
                         <button type="submit" class="btn-stripe" data-tid="elements.form.pay_button" @click.prevent="submitForm()">Submit</button>
                     </div>
                 </form>
@@ -88,7 +151,15 @@
                     formElements: '',
                     stripeInformation: {},
                     loading: true,
-                    errorApi: ''
+                    errorApi: '',
+                    userId: '{{ $user->id ?? null }}',
+                    guard: '{{ $guard ?? null }}',
+                    data: {
+                        first_name: '',
+                        last_name: '',
+                        email: '',
+                        phone: ''
+                    }
                 }
             },
             mounted() {
@@ -179,30 +250,17 @@
                         });
                     });
                 },
-                handleChange() {
-                    this.stripeInformation = {};
-                    this.$emit('checkPayment', { check: true, id: null });
-                    this.enableInputs();
-                },
                 async getInformationStripe(card = null) {
                     this.loading = true;
                     let newData = this.stripeInformation;
                     let isValid = false;
+
                     try {
-                        if (!card) {
-                            await this.$http.get("{{ route('customer.card.view', ['id' => $customer->id]) }}").then(response => {
-                                if (response && response.data) {
-                                    isValid = true;
-                                    newData = response.data;
-                                }
-                            })
-                        } else {
+                        if (card) {
                             isValid = true;
                             newData = card;
                         }
-                        if (isValid) {
-                            this.$emit('checkPayment', { check: false, id: newData.id });
-                        }
+
                     } finally {
                         this.stripeInformation = newData;
                         this.loading = false;
@@ -239,19 +297,33 @@
                     submit.remove();
                 },
                 // Listen on the form's 'submit' handler...
-                submitForm: function(e) {
+                async submitForm(e) {
                     // Trigger HTML5 validation UI on the form if any of the inputs fail
                     // validation.
                     var plainInputsValid = true;
+                    var checkValidation = true;
+
                     Array.prototype.forEach.call(this.form.querySelectorAll('input'), function(input) {
                         if (input.checkValidity && !input.checkValidity()) {
                             plainInputsValid = false;
                             return;
                         }
                     });
+
                     if (!plainInputsValid) {
                         this.triggerBrowserValidation();
                         return;
+                    }
+
+                    // Check validation
+                    await this.$validator.validateAll().then(result => {
+                        if (!result) {
+                            checkValidation = false;
+                        }
+                    });
+
+                    if (!checkValidation) {
+                        return false;
                     }
 
                     // Show a loading screen...
@@ -262,6 +334,7 @@
 
                     // Gather additional customer data we may have collected in our form.
                     var name = this.form.querySelector('#' + this.boostersName + '-name');
+
                     var additionalData = {
                         name: name ? name.value : undefined,
                     };
@@ -275,19 +348,23 @@
                         if (result.token) {
                             // If we received a token, show the token ID.
                             this.boosters.classList.add('submitted');
-                            this.stripeTokenHandler(result.token);
+                            this.stripeTokenHandler(result.token, this.data);
                         } else {
                             // Otherwise, un-disable inputs.
                             this.enableInputs();
                         }
                     });
                 },
-                stripeTokenHandler: function(token) {
+                stripeTokenHandler: function(token, data) {
                     let self = this;
                     self.loading = true;
+                    let url = '{{ route("user.card.store-for-charge") }}';
 
-                    self.$http.post("{{ route('customer.card.store-for-charge', ['id' => $customer->id]) }}", {
+                    self.$http.post(url, {
                         stripe_token: token.id,
+                        guard: this.guard,
+                        id: this.userId,
+                        data: data
                     }).then(response => {
                         if (response && response.data) {
                             self.getInformationStripe(response.data.card);
@@ -297,6 +374,7 @@
                     }).catch(function (error) {
                         self.errorApi = error.response && error.response.data.message;
                         self.loading = false;
+                        self.enableInputs();
                     })
                 },
             }

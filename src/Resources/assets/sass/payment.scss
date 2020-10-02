@@ -1,0 +1,138 @@
+@import "variables";
+@import "mixins";
+@import "common";
+
+.payment-checkout {
+    .body-stripe {
+        margin: 20px 0;
+    }
+}
+
+.header-shipping-method {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .title-page {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+}
+
+.title-page {
+    margin: 10px 0 30px;
+    font-size: 24px;
+    line-height: 29px;
+    letter-spacing: 1px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $border-common;
+}
+
+.text-change {
+    margin: 0;
+    font-size: 11px;
+    line-height: 13px;
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
+
+.content-loading {
+    position: relative;
+    text-align: center;
+    padding: 30px;
+    width: 100%;
+}
+
+.shipping-methods-container {
+    @extend .shipping-container;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    .description {
+        margin: 12px 0 0;
+        font-size: 12px;
+        line-height: 22px;
+    }
+    .group-radio {
+        padding: 30px 15px 0;
+        &:last-child {
+            padding-bottom: 30px;
+        }
+        @include breakpoint($grid-breakpoints-lg) {
+            width: 50%;
+        }
+    }
+}
+
+.payment-methods-block {
+    @extend .shipping-methods-container;
+    padding: 30px;
+}
+
+.body-stripe {
+    .form-stripe {
+        display: none;
+        &.show {
+            display: block;
+        }
+    }
+    .content-stripe {
+        .label-default {
+            font-family: $font-proxima-nova-bold;
+            font-size: 15px;
+        }
+        .text-default {
+            cursor: pointer;
+        }
+    }
+    .btn-stripe {
+        background-color: $white-color;
+        border: 1px solid $border-common;
+        padding: 7px 15px;
+        &:hover, &:focus {
+            background-color: $white-color;
+            border-color: $border-common;
+            outline: none;
+        }
+    }
+
+    .shipping-container {
+        background: #F7F7F7;
+        padding: 30px 15px;
+        margin: 20px 0;
+        @include breakpoint($grid-breakpoints-sm) {
+            padding: 30px;
+        }
+        .item-row {
+            display: flex;
+            margin-bottom: 17px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+        .label-item-shipping {
+            font-size: 14px;
+            line-height: 22px;
+            font-weight: normal;
+            min-width: 120px;
+            margin: 0;
+        }
+        .text-default {
+            font-size: 14px;
+            line-height: 17px;
+            font-family: $font-proxima-nova-regular;
+            text-transform: uppercase;
+            margin: 0;
+        }
+    }
+}
+
+.error {
+    margin-top: 10px;
+    color: #ff5656;
+    &.error-stripe {
+        visibility: hidden;
+    }
+}

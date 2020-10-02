@@ -1,0 +1,148 @@
+// ----------------------------------------------------------------------
+// Flex
+// ----------------------------------------------------------------------
+.flex-box {
+    display: flex;
+}
+.align-items-center {
+    display: flex;
+    align-items: center;
+}
+.justify-content-center {
+    display: flex;
+    justify-content: center;
+}
+.space-between {
+    display: flex;
+    justify-content: space-between;
+}
+.space-between-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.flex-box-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+// ----------------------------------------------------------------------
+// Padding
+// ----------------------------------------------------------------------
+.pd0 {
+    padding: 0;
+}
+.pdlr0 {
+    padding-left: 0;
+    padding-right: 0;
+}
+// ----------------------------------------------------------------------
+// Margin
+// ----------------------------------------------------------------------
+.mb-5 {
+    margin-bottom: 5px;
+}
+.mb-10 {
+    margin-bottom: 10px;
+}
+.mb-15 {
+    margin-bottom: 15px;
+}
+.mb-20 {
+    margin-bottom: 20px;
+}
+.mb-25 {
+    margin-bottom: 25px;
+}
+.mb-30 {
+    margin-bottom: 30px;
+}
+.mb-35 {
+    margin-bottom: 35px;
+}
+.mb-40 {
+    margin-bottom: 40px;
+}
+.mb-45 {
+    margin-bottom: 45px;
+}
+.mb-50 {
+    margin-bottom: 50px;
+}
+.mb-60 {
+    margin-bottom: 60px;
+}
+.mb-70 {
+    margin-bottom: 70px;
+}
+.mb-80 {
+    margin-bottom: 80px;
+}
+.mb-90 {
+    margin-bottom: 90px;
+}
+.mt-5 {
+    margin-top: 5px;
+}
+.mt-10 {
+    margin-top: 10px;
+}
+.mt-15 {
+    margin-top: 15px;
+}
+.mt-20 {
+    margin-top: 20px;
+}
+.mt-25 {
+    margin-top: 25px;
+}
+.mt-30 {
+    margin-top: 30px;
+}
+.mt-35 {
+    margin-top: 35px;
+}
+.mt-40 {
+    margin-top: 40px;
+}
+.mt-45 {
+    margin-top: 45px;
+}
+.mt-50 {
+    margin-top: 50px;
+}
+.mt-60 {
+    margin-top: 60px;
+}
+.mt-70 {
+    margin-top: 70px;
+}
+.mt-80 {
+    margin-top: 80px;
+}
+.mt-90 {
+    margin-top: 90px;
+}
+// ----------------------------------------------------------------------
+// Form
+// ----------------------------------------------------------------------
+.input-default {
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    padding: 10px 15px;
+    border: 1px solid rgba(32, 29, 29, 0.15);
+    font-family: 'Proxima-Nova-Regular', sans-serif;
+    background: #fff;
+    appearance: none;
+    &:focus {
+        outline: none;
+    }
+}
+.label-default {
+    font-size: 13px;
+    line-height: 16px;
+    margin-bottom: 13px;
+    font-weight: 500;
+    background: #fff;
+}
