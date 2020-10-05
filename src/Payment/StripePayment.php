@@ -105,6 +105,57 @@ class StripePayment extends Payment
         return $customer;
     }
 
+    public function getUserStripe()
+    {
+        $userStripe = null;
+        $user = $this->getUser();
+        if ($user) {
+            $userStripe = UserStripe::where('user_id', $user->id)->where('type', '=', $this->getGuard())->first();
+        }
+
+        return $userStripe;
+    }
+
+    public function retrieveCustomer()
+    {
+        $userStripe = $this->getUserStripe();
+        $stripeCustomerId = $userStripe->stripe_customer_id ?? null;
+        $customer = null;
+        if ($stripeCustomerId) {
+            $customer = \Stripe\Customer::retrieve($stripeCustomerId);
+            if (isset($customer->deleted) && $customer->deleted) {
+                $userStripe->delete();
+            }
+        }
+
+        return $customer;
+    }
+
+    public function cards()
+    {
+        $cards = [];
+        $customer = $this->retrieveCustomer();
+        if (!empty($customer->sources)) {
+            $cardInfo = $customer->sources->toArray(true);
+            $cards = $cardInfo['data'];
+        }
+
+        return $cards;
+    }
+
+    public function showCard($id)
+    {
+        $customer = $this->retrieveCustomer();
+
+        try {
+            $card = $customer->sources->retrieve($id)->toArray(true);
+        } catch (\Exception $e) {
+            $card = [];
+        }
+
+        return $card;
+    }
+
     public function getApiKey()
     {
         $configs = $this->getConfigs();

@@ -16,11 +16,10 @@ class PaymentController extends Controller
 
     protected $stripePayment;
 
-    public function __construct(StripePayment $stripePayment)
+    public function __construct()
     {
         $this->_config = request('_config');
-
-        $this->stripePayment = $stripePayment;
+        $this->stripePayment = new StripePayment;
     }
 
     public function getGuard()
@@ -31,7 +30,7 @@ class PaymentController extends Controller
     public function setGuard($value = null)
     {
         if (!$value) {
-            $value = request()->guard;
+            $value = request()->guard ?? 'customer';
         }
 
         $this->guard = $value;
@@ -86,5 +85,19 @@ class PaymentController extends Controller
         }
 
         return response()->json(['message' => 'Success', 'card' => $card], 200);
+    }
+
+    public function cards()
+    {
+        $this->stripePayment->setGuard($this->getGuard());
+
+        return $this->stripePayment->cards();
+    }
+
+    public function showCard($id)
+    {
+        $this->stripePayment->setGuard($this->getGuard());
+
+        return $this->stripePayment->showCard($id);
     }
 }
