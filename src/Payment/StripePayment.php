@@ -65,11 +65,8 @@ class StripePayment extends Payment
     public function createOrRetrieveCustomer($newStatus = 1, $data = [])
     {
         $user = $this->getUser();
-        $stripeCustomerId = null;
-        if ($user) {
-            $userStripe= UserStripe::where('user_id', $user->id)->where('type', '=', $this->getGuard())->first();
-            $stripeCustomerId = $userStripe->stripe_customer_id ?? null;
-        }
+        $userStripe = $this->getUserStripe();
+        $stripeCustomerId = $userStripe->stripe_customer_id ?? null;
 
         if (empty($stripeCustomerId)) {
             $firstName = $data['first_name'] ?? ($user->first_name ?? null);
@@ -187,6 +184,28 @@ class StripePayment extends Payment
         }
 
         return $this->success($card->toArray(true), 200);
+    }
+
+    public function charge($amount, $currency, $data = [])
+    {
+        $customer = $this->createOrRetrieveCustomer();
+
+        $data = array_merge(
+            [
+                'amount' => $amount,
+                'currency' => $currency,
+                'customer' => $customer->id,
+            ],
+            $data
+        );
+
+        try {
+            $charge = \Stripe\Charge::create($data);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 400);
+        }
+
+        return $this->success($charge->toArray(true), 200);
     }
 
     public function error($error, $status)

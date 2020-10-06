@@ -33,11 +33,38 @@ php artisan route:cache
 2. Enter the values of the stripe's keys and Save
 
 ## Usage
-- Implement form Strcreate card in view
+1. Implement form Stripte create card in view
 ```php
 @section('content-wrapper')
   // $guard accept value is customer or admin
   @php $guard = 'customer'; @endphp
   @include('ggphp-payment::payment.payment-stripe', ['guard' => $guard])
 @endsection
+```
+2. Use function helper
+- Initial installation
+```php
+use GGPHP\Payment\Http\Controllers\PaymentController;
+
+$stripe = new PaymentController();
+```
+- Set guard
+```php
+$stripe->setGuard('customer');
+```
+- Get list cards of customer
+```php
+$stripe->cards();
+```
+- Get detail card
+```php
+$stripe->showCard($id);
+```
+- Update card
+```php
+$stripe->updateCard($id);
+```
+- Charge
+```php
+$stripe->charge($amount, $currency, $data = []);
 ```
