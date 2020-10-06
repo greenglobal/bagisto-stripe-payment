@@ -135,25 +135,74 @@ class StripePayment extends Payment
     {
         $cards = [];
         $customer = $this->retrieveCustomer();
-        if (!empty($customer->sources)) {
-            $cardInfo = $customer->sources->toArray(true);
-            $cards = $cardInfo['data'];
+        if (empty($customer)) {
+            return $this->error('Customer not found', 404);
         }
 
-        return $cards;
+        try {
+            $cardInfo = $customer->sources->toArray(true);
+            $cards = $cardInfo['data'];
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 400);
+        }
+
+        return $this->success($cards, 200);
     }
 
     public function showCard($id)
     {
         $customer = $this->retrieveCustomer();
+        $cards = [];
+
+        if (empty($customer)) {
+            return $this->error('Customer not found', 404);
+        }
 
         try {
             $card = $customer->sources->retrieve($id)->toArray(true);
         } catch (\Exception $e) {
-            $card = [];
+            return $this->error($e->getMessage(), 400);
         }
 
-        return $card;
+        return $this->success($card, 200);
+    }
+
+    public function updateCard($id)
+    {
+        $customer = $this->retrieveCustomer();
+        $card = [];
+
+        if (empty($customer)) {
+            return $this->error('Customer not found', 404);
+        }
+
+        try {
+            $card = \Stripe\Customer::updateSource(
+                $customer->id,
+                $id,
+                request()->all()
+            );
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 400);
+        }
+
+        return $this->success($card->toArray(true), 200);
+    }
+
+    public function error($error, $status)
+    {
+        return [
+            'error' => $error,
+            'status' => $status,
+        ];
+    }
+
+    public function success($data, $status)
+    {
+        return [
+            'data' => $data,
+            'status' => $status,
+        ];
     }
 
     public function getApiKey()
