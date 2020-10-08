@@ -107,4 +107,11 @@ class PaymentController extends Controller
 
         return $this->stripePayment->updateCard($id);
     }
+
+    public function charge($amount, $currency, $data = [])
+    {
+        $this->stripePayment->setGuard($this->getGuard());
+
+        return $this->stripePayment->charge($amount, $currency, $data);
+    }
 }
